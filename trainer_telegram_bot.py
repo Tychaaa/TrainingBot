@@ -12,17 +12,12 @@ from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMar
 
 from texts import ABOUT_TEXT, HALL_TEXT, PRICES_TEXT, TRAININGS_TEXT, WELCOME_TEXT
 
-# =========================
 # Загрузка переменных окружения
-# =========================
 load_dotenv()
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 CONTACT_URL = os.getenv("CONTACT_URL")
 
-# =========================
-# Callback data
-# =========================
 CB_ABOUT = "show_about"
 CB_TRAININGS = "show_trainings"
 CB_HALL = "show_hall"
@@ -32,9 +27,7 @@ CB_BACK = "back_to_menu"
 router = Router()
 
 
-# =========================
 # Клавиатуры
-# =========================
 def build_main_menu() -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(
         inline_keyboard=[
@@ -43,7 +36,7 @@ def build_main_menu() -> InlineKeyboardMarkup:
                 InlineKeyboardButton(text="🏊 О тренировках", callback_data=CB_TRAININGS),
             ],
             [
-                InlineKeyboardButton(text="🏟️ О зале", callback_data=CB_HALL),
+                InlineKeyboardButton(text="🏟️ О \"Ривере\"", callback_data=CB_HALL),
                 InlineKeyboardButton(text="💰 Стоимость", callback_data=CB_PRICES),
             ],
             [InlineKeyboardButton(text="📩 Связаться", url=CONTACT_URL)],
@@ -59,9 +52,7 @@ def build_back_menu() -> InlineKeyboardMarkup:
     )
 
 
-# =========================
 # Вспомогательная функция
-# =========================
 async def safe_edit(callback: CallbackQuery, text: str, markup: InlineKeyboardMarkup) -> None:
     if callback.message is None:
         await callback.answer("Не удалось обновить сообщение.", show_alert=True)
@@ -71,9 +62,7 @@ async def safe_edit(callback: CallbackQuery, text: str, markup: InlineKeyboardMa
     await callback.answer()
 
 
-# =========================
 # Обработчики команд
-# =========================
 @router.message(CommandStart())
 async def start_handler(message: Message) -> None:
     await message.answer(WELCOME_TEXT, reply_markup=build_main_menu())
@@ -84,9 +73,7 @@ async def menu_handler(message: Message) -> None:
     await message.answer(WELCOME_TEXT, reply_markup=build_main_menu())
 
 
-# =========================
 # Обработчики кнопок
-# =========================
 @router.callback_query(F.data == CB_ABOUT)
 async def about_handler(callback: CallbackQuery) -> None:
     await safe_edit(callback, ABOUT_TEXT, build_back_menu())
@@ -112,9 +99,7 @@ async def back_handler(callback: CallbackQuery) -> None:
     await safe_edit(callback, WELCOME_TEXT, build_main_menu())
 
 
-# =========================
 # Запуск бота
-# =========================
 async def main() -> None:
     if not BOT_TOKEN:
         raise ValueError(
